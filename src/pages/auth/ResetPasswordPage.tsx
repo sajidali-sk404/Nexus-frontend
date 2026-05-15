@@ -12,7 +12,7 @@ export const ResetPasswordPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
-  const { resetPassword } = useAuth();
+  const { changePassword } = useAuth();
   const token = searchParams.get('token');
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +29,7 @@ export const ResetPasswordPage: React.FC = () => {
     setIsLoading(true);
     
     try {
-      await resetPassword(token, password);
+      await changePassword(token, password);
       navigate('/login');
     } catch (error) {
       // Error is handled by the AuthContext

@@ -29,6 +29,7 @@ import { DealsPage } from './pages/deals/DealsPage';
 
 // Chat Pages
 import { ChatPage } from './pages/chat/ChatPage';
+import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           {/* Authentication Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forget-password" element={<ForgotPasswordPage />} />
           
           {/* Dashboard Routes */}
           <Route path="/dashboard" element={<DashboardLayout />}>
