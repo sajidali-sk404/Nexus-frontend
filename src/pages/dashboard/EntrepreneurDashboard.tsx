@@ -19,7 +19,7 @@ export const EntrepreneurDashboard: React.FC = () => {
   useEffect(() => {
     if (user) {
       // Load collaboration requests
-      const requests = getRequestsForEntrepreneur(user.id);
+      const requests = getRequestsForEntrepreneur(user._id);
       setCollaborationRequests(requests);
     }
   }, [user]);
@@ -27,7 +27,7 @@ export const EntrepreneurDashboard: React.FC = () => {
   const handleRequestStatusUpdate = (requestId: string, status: 'accepted' | 'rejected') => {
     setCollaborationRequests(prevRequests => 
       prevRequests.map(req => 
-        req.id === requestId ? { ...req, status } : req
+        req._id === requestId ? { ...req, status } : req
       )
     );
   };
@@ -128,7 +128,7 @@ export const EntrepreneurDashboard: React.FC = () => {
                 <div className="space-y-4">
                   {collaborationRequests.map(request => (
                     <CollaborationRequestCard
-                      key={request.id}
+                      key={request._id}
                       request={request}
                       onStatusUpdate={handleRequestStatusUpdate}
                     />
@@ -160,7 +160,7 @@ export const EntrepreneurDashboard: React.FC = () => {
             <CardBody className="space-y-4">
               {recommendedInvestors.map(investor => (
                 <InvestorCard
-                  key={investor.id}
+                  key={investor._id}
                   investor={investor}
                   showActions={false}
                 />

@@ -67,7 +67,7 @@ export const SettingsPage: React.FC = () => {
             <CardBody className="space-y-6">
               <div className="flex items-center gap-6">
                 <Avatar
-                  src={user.avatarUrl}
+                  src={user.avatarUrl as string}
                   alt={user.name}
                   size="xl"
                 />

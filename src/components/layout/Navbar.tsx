@@ -26,7 +26,7 @@ export const Navbar: React.FC = () => {
   
   // User profile route based on role and ID
   const profileRoute = user 
-    ? `/profile/${user.role}/${user.id}` 
+    ? `/profile/${user.role}/${user._id}` 
     : '/login';
   
   const navLinks = [
@@ -94,7 +94,7 @@ export const Navbar: React.FC = () => {
                 
                 <Link to={profileRoute} className="flex items-center space-x-2 ml-2">
                   <Avatar
-                    src={user.avatarUrl}
+                    src={user.avatarUrl ?? ""}
                     alt={user.name}
                     size="sm"
                     status={user.isOnline ? 'online' : 'offline'}
@@ -138,7 +138,7 @@ export const Navbar: React.FC = () => {
               <>
                 <div className="flex items-center space-x-3 px-3 py-2">
                   <Avatar
-                    src={user.avatarUrl}
+                    src={user.avatarUrl ?? ""}
                     alt={user.name}
                     size="sm"
                     status={user.isOnline ? 'online' : 'offline'}

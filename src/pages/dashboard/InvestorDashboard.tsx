@@ -19,7 +19,7 @@ export const InvestorDashboard: React.FC = () => {
   if (!user) return null;
   
   // Get collaboration requests sent by this investor
-  const sentRequests = getRequestsFromInvestor(user.id);
+  const sentRequests = getRequestsFromInvestor(user._id);
   const requestedEntrepreneurIds = sentRequests.map(req => req.entrepreneurId);
   
   // Filter entrepreneurs based on search and industry filters
@@ -159,7 +159,7 @@ export const InvestorDashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredEntrepreneurs.map(entrepreneur => (
                   <EntrepreneurCard
-                    key={entrepreneur.id}
+                    key={entrepreneur._id}
                     entrepreneur={entrepreneur}
                   />
                 ))}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { MessageCircle, Users, Calendar, Building2, MapPin, UserCircle, FileText, DollarSign, Send } from 'lucide-react';
 import { Avatar } from '../../components/ui/Avatar';
@@ -6,17 +6,83 @@ import { Button } from '../../components/ui/Button';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { useAuth } from '../../context/AuthContext';
-import { findUserById } from '../../data/users';
-import { createCollaborationRequest, getRequestsFromInvestor } from '../../data/collaborationRequests';
-import { Entrepreneur } from '../../types';
+import api from '../../lib/api';
 
 export const EntrepreneurProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user: currentUser } = useAuth();
+
+  // ✅ All useState Hooks at the top
+  const [entrepreneur, setEntrepreneur] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [hasRequestedCollaboration, setHasRequestedCollaboration] = useState(false);
   
-  // Fetch entrepreneur data
-  const entrepreneur = findUserById(id || '') as Entrepreneur | null;
+  console.log('Current User:', currentUser);
   
+  // ✅ Hook 1: Fetch entrepreneur profile from backend
+  useEffect(() => {
+    const fetchEntrepreneur = async () => {
+      try {
+        const response = await api.get(`/users/${id}`);
+        setEntrepreneur(response.data.user);
+      } catch (error) {
+        console.error('Failed to fetch entrepreneur', error);
+        setEntrepreneur(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchEntrepreneur();
+    }
+  }, [id]);
+
+  // ✅ Hook 2 (MOVED UP): Check if investor already sent request
+  // Must be called before any 'if' return statements!
+useEffect(() => {
+  const checkRequest = async () => {
+    if (!currentUser?._id || !id) return;
+
+    try {
+      // ✅ FIXED: Use correct endpoint
+      const response = await api.get('/collaborations/get-sent-requests');
+
+      const alreadySent = response.data.requests.some(
+        (req: any) => {
+          const entrepreneurId = typeof req.entrepreneurId === 'object'
+            ? req.entrepreneurId._id
+            : req.entrepreneurId;
+          return entrepreneurId === id;
+        }
+      );
+
+      setHasRequestedCollaboration(alreadySent);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (currentUser?.role === 'investor') {
+    checkRequest();
+  }
+}, [currentUser, id]);
+
+// ✅ Send collaboration request
+
+  
+  // 🛑 EARLY RETURNS (Placed safely AFTER all Hooks)
+
+  // 1. Show loading state while API fetches data
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-600">Loading profile...</p>
+      </div>
+    );
+  }
+
+  // 2. Show error if no entrepreneur found
   if (!entrepreneur || entrepreneur.role !== 'entrepreneur') {
     return (
       <div className="text-center py-12">
@@ -29,27 +95,24 @@ export const EntrepreneurProfile: React.FC = () => {
     );
   }
   
-  const isCurrentUser = currentUser?.id === entrepreneur.id;
+  const isCurrentUser = currentUser?._id === entrepreneur._id;
   const isInvestor = currentUser?.role === 'investor';
   
-  // Check if the current investor has already sent a request to this entrepreneur
-  const hasRequestedCollaboration = isInvestor && id 
-    ? getRequestsFromInvestor(currentUser.id).some(req => req.entrepreneurId === id)
-    : false;
-  
-  const handleSendRequest = () => {
-    if (isInvestor && currentUser && id) {
-      createCollaborationRequest(
-        currentUser.id,
-        id,
-        `I'm interested in learning more about ${entrepreneur.startupName} and would like to explore potential investment opportunities.`
-      );
-      
-      // In a real app, we would refresh the data or update state
-      // For this demo, we'll force a page reload
-      window.location.reload();
-    }
-  };
+  const handleSendRequest = async () => {
+  if (!currentUser || currentUser.role !== 'investor' || !id) return;
+
+  try {
+    // ✅ FIXED: Use correct endpoint
+    await api.post('/collaborations/send', {
+      entrepreneurId: id,
+      message: `I'm interested in learning more about ${entrepreneur?.startupName}`
+    });
+
+    setHasRequestedCollaboration(true);
+  } catch (error) {
+    console.error('Failed to send request', error);
+  }
+};
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -58,7 +121,7 @@ export const EntrepreneurProfile: React.FC = () => {
         <CardBody className="sm:flex sm:items-start sm:justify-between p-6">
           <div className="sm:flex sm:space-x-6">
             <Avatar
-              src={entrepreneur.avatarUrl}
+              src={entrepreneur.avatarUrl ?? ""}
               alt={entrepreneur.name}
               size="xl"
               status={entrepreneur.isOnline ? 'online' : 'offline'}
@@ -69,7 +132,7 @@ export const EntrepreneurProfile: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900">{entrepreneur.name}</h1>
               <p className="text-gray-600 flex items-center justify-center sm:justify-start mt-1">
                 <Building2 size={16} className="mr-1" />
-                Founder at {entrepreneur.startupName}
+                Founder at {entrepreneur?.startupName}
               </p>
               
               <div className="flex flex-wrap gap-2 justify-center sm:justify-start mt-3">
@@ -93,7 +156,7 @@ export const EntrepreneurProfile: React.FC = () => {
           <div className="mt-6 sm:mt-0 flex flex-col sm:flex-row gap-2 justify-center sm:justify-end">
             {!isCurrentUser && (
               <>
-                <Link to={`/chat/${entrepreneur.id}`}>
+                <Link to={`/chat/${entrepreneur._id}`}>
                   <Button
                     variant="outline"
                     leftIcon={<MessageCircle size={18} />}

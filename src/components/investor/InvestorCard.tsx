@@ -19,12 +19,12 @@ export const InvestorCard: React.FC<InvestorCardProps> = ({
   const navigate = useNavigate();
   
   const handleViewProfile = () => {
-    navigate(`/profile/investor/${investor.id}`);
+    navigate(`/profile/investor/${investor._id}`);
   };
   
   const handleMessage = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
-    navigate(`/chat/${investor.id}`);
+    navigate(`/chat/${investor._id}`);
   };
   
   return (
@@ -36,7 +36,7 @@ export const InvestorCard: React.FC<InvestorCardProps> = ({
       <CardBody className="flex flex-col">
         <div className="flex items-start">
           <Avatar
-            src={investor.avatarUrl}
+            src={investor.avatarUrl ?? ""}
             alt={investor.name}
             size="lg"
             status={investor.isOnline ? 'online' : 'offline'}
@@ -48,7 +48,7 @@ export const InvestorCard: React.FC<InvestorCardProps> = ({
             <p className="text-sm text-gray-500 mb-2">Investor • {investor.totalInvestments} investments</p>
             
             <div className="flex flex-wrap gap-2 mb-3">
-              {investor.investmentStage.map((stage, index) => (
+              {investor.investmentStage?.map((stage, index) => (
                 <Badge key={index} variant="secondary" size="sm">{stage}</Badge>
               ))}
             </div>
@@ -58,7 +58,7 @@ export const InvestorCard: React.FC<InvestorCardProps> = ({
         <div className="mt-3">
           <h4 className="text-sm font-medium text-gray-900 mb-1">Investment Interests</h4>
           <div className="flex flex-wrap gap-2">
-            {investor.investmentInterests.map((interest, index) => (
+            {investor.investmentInterests?.map((interest, index) => (
               <Badge key={index} variant="primary" size="sm">{interest}</Badge>
             ))}
           </div>

@@ -58,12 +58,15 @@ const login = async (
     toast.success("Login successful");
 
   } catch (error: any) {
-    const errorMessage =
-      error?.response?.data?.message ||
-      "Login failed";
+    console.log(
+      "Login error:",
+      error.response?.data
+    );
 
-    toast.error(errorMessage);
-    throw error;
+    throw new Error(
+      error.response?.data?.message ||
+        "Invalid email or password"
+    );
   } finally {
     setIsLoading(false);
   }
@@ -91,10 +94,10 @@ const login = async (
 
     toast.success("Account created successfully!");
   } catch (error: any) {
-    toast.error(
-      error?.response?.data?.message || "Registration failed"
+    throw new Error(
+      error.response?.data?.message ||
+        "Registration failed"
     );
-    throw error;
   } finally {
     setIsLoading(false);
   }
@@ -118,12 +121,17 @@ const login = async (
       "Password reset instructions sent to your email"
     );
   } catch (error: any) {
-    const errorMessage =
-      error?.response?.data?.message ||
-      "Failed to send reset email";
+    console.log(
+      "Forgot password error:",
+      error.response?.data
+    );
 
-    toast.error(errorMessage);
-    throw error;
+    throw new Error(
+      error.response?.data?.message ||
+        "Failed to send password reset instructions"
+    );
+  } finally {
+    setIsLoading(false);
   }
 };
   // Mock reset password function
@@ -148,12 +156,17 @@ const changePassword = async (
       "Password changed successfully"
     );
   } catch (error: any) {
-    const errorMessage =
-      error?.response?.data?.message ||
-      "Failed to change password";
+    console.log(
+      "Change password error:",
+      error.response?.data
+    );
 
-    toast.error(errorMessage);
-    throw error;
+    throw new Error(
+      error.response?.data?.message ||
+        "Failed to change password"
+    );
+  } finally {
+    setIsLoading(false);
   }
 };
 

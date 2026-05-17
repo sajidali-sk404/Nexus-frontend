@@ -1,12 +1,12 @@
 export type UserRole = 'entrepreneur' | 'investor';
 
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   role: UserRole;
-  avatarUrl: string;
-  bio: string;
+  avatarUrl?: string;
+  bio?: string;
   isOnline?: boolean;
   createdAt: string;
 }
@@ -33,23 +33,31 @@ export interface Investor extends User {
 }
 
 export interface Message {
-  id: string;
-  senderId: string;
+  _id: string;
+  senderId:
+    | string
+    | {
+        _id: string;
+        name?: string;
+        avatarUrl?: string;
+      },
   receiverId: string;
   content: string;
   timestamp: string;
   isRead: boolean;
+  createdAt?: string; // Optional for backward compatibility
+
 }
 
 export interface ChatConversation {
-  id: string;
-  participants: string[];
+  _id?: string;
+  participants: User[];
   lastMessage?: Message;
   updatedAt: string;
 }
 
 export interface CollaborationRequest {
-  id: string;
+  _id: string;
   investorId: string;
   entrepreneurId: string;
   message: string;
@@ -58,7 +66,7 @@ export interface CollaborationRequest {
 }
 
 export interface Document {
-  id: string;
+  _id: string;
   name: string;
   type: string;
   size: string;

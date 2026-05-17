@@ -19,12 +19,12 @@ export const EntrepreneurCard: React.FC<EntrepreneurCardProps> = ({
   const navigate = useNavigate();
   
   const handleViewProfile = () => {
-    navigate(`/profile/entrepreneur/${entrepreneur.id}`);
+    navigate(`/profile/entrepreneur/${entrepreneur._id}`);
   };
   
   const handleMessage = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
-    navigate(`/chat/${entrepreneur.id}`);
+    navigate(`/chat/${entrepreneur._id}`);
   };
   
   return (
@@ -36,7 +36,7 @@ export const EntrepreneurCard: React.FC<EntrepreneurCardProps> = ({
       <CardBody className="flex flex-col">
         <div className="flex items-start">
           <Avatar
-            src={entrepreneur.avatarUrl}
+            src={entrepreneur.avatarUrl ?? ""}
             alt={entrepreneur.name}
             size="lg"
             status={entrepreneur.isOnline ? 'online' : 'offline'}
