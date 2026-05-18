@@ -218,6 +218,7 @@ const updateProfile = async (
     forgotPassword,
     changePassword,
     updateProfile,
+    setUser,
     isAuthenticated: !!user,
     isLoading
   };

@@ -31,6 +31,8 @@ import { DealsPage } from './pages/deals/DealsPage';
 import { ChatPage } from './pages/chat/ChatPage';
 import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
 
+import { WalletPage } from './pages/wallet/WalletPage';
+
 function App() {
   return (
     <AuthProvider>
@@ -40,6 +42,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forget-password" element={<ForgotPasswordPage />} />
+          <Route path="/wallet" element={<WalletPage />} />
           
           {/* Dashboard Routes */}
           <Route path="/dashboard" element={<DashboardLayout />}>
